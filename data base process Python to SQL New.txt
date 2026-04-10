@@ -2,31 +2,41 @@ from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 import pandas as pd
 
-# Connection details
+# -------------------------------
+# PostgreSQL Connection Details
+# -------------------------------
 username = "postgres"
 password = quote_plus("**************")   # handles special characters
 host = "localhost"
 port = "5435"
 database = "postgres"
 
-# Create engine
+# Create SQLAlchemy engine
 engine = create_engine(
     f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}"
 )
 
-# Create DataFrame
-df = pd.DataFrame({
-    "id": [1, 2, 3],
-    "name": ["Amit", "Rahul", "Sneha"]
-})
+# -------------------------------
+# Read Excel File
+# -------------------------------
+file_path = "employee_data.xlsx"   # your Excel file name
+sheet_name = "Sheet1"              # change if needed
 
+df = pd.read_excel(file_path, sheet_name=sheet_name)
+
+# Preview data (optional)
+print("Preview of data:")
+print(df.head())
+
+# -------------------------------
 # Export to PostgreSQL
+# -------------------------------
 df.to_sql(
-    "employee_test",
+    "employee_test",   # table name in PostgreSQL
     con=engine,
     schema="public",
-    if_exists="replace",
+    if_exists="replace",   # options: fail, replace, append
     index=False
 )
 
-print("Data exported successfully")
+print("✅ Data exported successfully from Excel to PostgreSQL!")
